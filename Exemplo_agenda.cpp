@@ -16,7 +16,7 @@ typedef struct {
 } tcontato;
 
 // Carrega contatos do disco e acrescenta 1000 entradas vazias na agenda.
-tcontato * leitura(char filename[], int *qc) {
+tcontato * leitura(const char filename[], int *qc) {
     FILE *fp;
     tcontato *v;
     int i;
@@ -61,7 +61,7 @@ int incluir(tcontato *v, int *qc) {
 }
 
 // Salva a agenda em disco. Somente entradas preenchidas.
-int salvar(char filename[], tcontato *v, int qc) {
+int salvar(const char filename[], tcontato *v, int qc) {
    FILE *fp;
    int i;
    fp=fopen(filename, "wb");
@@ -88,11 +88,26 @@ void listar(tcontato *v, int qc){
 
 // Fun��o principal.
 int main() {
-  int qc; //qntd de contatos
+  int qc, op; //qntd de contatos
   tcontato *agenda;  
   agenda = leitura("C:\\Agenda.dad", &qc); 
-  incluir(agenda, &qc);
-  listar(agenda, qc);
-  salvar("C:\\Agenda.dad", agenda, qc); 
-  return 0;
+  do {
+    system ("cls");
+    printf ("Menu\n");
+    printf ("1- Inserir novos contatos.\n");
+    printf ("2- Listar todos os contatos.\n");
+    printf ("3 - Salvar alterações na sua agenda\n");
+    printf ("4 - Sair da Agenda\n");
+    printf ("Escolha uma opcao:\n");
+    scanf ("%d", &op);
+    switch (op) {
+      case 1: incluir(agenda, &qc); break;
+      case 2: listar (agenda, &qc); break;
+      case 3: salvar("C:\\Agenda.dad", agenda, qc); break;
+      case 4: break;
+      default: printf ("Escolha incorreta\n");
+  }
+}
+while (op != 4);
+return 0;
 }
