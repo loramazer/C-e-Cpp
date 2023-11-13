@@ -11,7 +11,8 @@ typedef struct {
 typedef struct {
    char nome[50];
    char fone[20];
-   tdata dtnasc;     
+   tdata dtnasc;    
+//  char sit; 
 } tcontato;
 
 // Carrega contatos do disco e acrescenta 1000 entradas vazias na agenda.
@@ -19,7 +20,7 @@ tcontato * leitura(char filename[], int *qc) {
     FILE *fp;
     tcontato *v;
     int i;
-    long tb;
+    long tb; //total de bytes
     fp=fopen(filename, "rb");
     if (fp==NULL) { *qc=0; tb=0;}
     else {
@@ -28,7 +29,7 @@ tcontato * leitura(char filename[], int *qc) {
         *qc=tb/sizeof(tcontato); 
         fseek(fp, 0, SEEK_SET);
     }
-    tb=tb+ 1000*sizeof(tcontato);  // adicionando 1000 espaços no vetor 
+    tb=tb+ 1000*sizeof(tcontato);  // adicionando 1000 espaï¿½os no vetor 
     v=(tcontato *) malloc(tb);
     
     for(i=0; i<*qc; i++) {
@@ -85,9 +86,9 @@ void listar(tcontato *v, int qc){
     system("pause");
 }
 
-// Função principal.
+// Funï¿½ï¿½o principal.
 int main() {
-  int qc;
+  int qc; //qntd de contatos
   tcontato *agenda;  
   agenda = leitura("C:\\Agenda.dad", &qc); 
   incluir(agenda, &qc);
