@@ -44,7 +44,8 @@ tcontato * leitura(const char filename[], int *qc) {
 int incluir(tcontato *v, int *qc) {
     char nome[50];
     int i;
-    printf("Nome: "); gets(nome);
+    printf("Nome: ");
+    gets(nome);
     i=*qc;
     while (strcmpi(nome, "fim") !=0 && i<*qc+1000) {
         strcpy(v[i].nome, nome);
@@ -90,6 +91,7 @@ void listar(tcontato *v, int qc){
 int main() {
   int qc, op; //qntd de contatos
   tcontato *agenda;  
+<<<<<<< Updated upstream
   agenda = leitura("C:\\Agenda.dad", &qc); 
   do {
     system ("cls");
@@ -110,4 +112,24 @@ int main() {
 }
 while (op != 4);
 return 0;
+=======
+  agenda = leitura("C:\\Agenda.dad", &qc);
+  do {
+      printf("Menu\n");
+      printf("1 - Incluir pessoas na agenda\n");
+      printf("2 - Listar pessoas da sua agenda\n");
+      printf("3 - Salvar alterações na agenda\n");
+      printf("4 - Encerra\n");
+      printf("Informe sua escolha: ");
+      scanf("%d", &op);
+      switch (op) {
+         case 1:  incluir(agenda, &qc); break;   
+         case 2:    listar(agenda, qc); break;
+         case 3:    salvar("C:\\Agenda.dad", agenda, qc);  break;
+         case 4:  break;
+         default: printf("Escolha incorreta\n");
+      }  
+   } while (op!=4);    
+   return 0;
+>>>>>>> Stashed changes
 }
