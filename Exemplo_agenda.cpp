@@ -45,6 +45,7 @@ int incluir(tcontato *v, int *qc) {
     char nome[50];
     int i;
     printf("Nome: ");
+    fflush(stdin);
     gets(nome);
     i=*qc;
     while (strcmpi(nome, "fim") !=0 && i<*qc+1000) {
@@ -62,13 +63,13 @@ int incluir(tcontato *v, int *qc) {
 }
 
 // Salva a agenda em disco. Somente entradas preenchidas.
-int salvar(const char filename[], tcontato *v, int qc) {
+int salvar(const char filename[], tcontato *v, int *qc) {
    FILE *fp;
    int i;
    fp=fopen(filename, "wb");
    if (fp==NULL) return -1;
    
-   for(i=0; i<qc; i++) 
+   for(i=0; i<*qc; i++) 
      fwrite(&v[i], sizeof(tcontato), 1, fp);
 
    fclose(fp);
@@ -76,9 +77,9 @@ int salvar(const char filename[], tcontato *v, int qc) {
 }
 
 // Lista a agenda.
-void listar(tcontato *v, int qc){
+void listar(tcontato *v, int *qc){
     int i;
-    for(i=0; i<qc; i++) 
+    for(i=0; i<*qc; i++) 
       printf("%-30s  %-20s  %d/%d/%d\n", v[i].nome, v[i].fone, 
       v[i].dtnasc.dia,
       v[i].dtnasc.mes,
@@ -87,11 +88,14 @@ void listar(tcontato *v, int qc){
     system("pause");
 }
 
+int excluir(tcontato *v, int *qc){
+  
+}
+
 // Fun��o principal.
 int main() {
   int qc, op; //qntd de contatos
   tcontato *agenda;  
-<<<<<<< Updated upstream
   agenda = leitura("C:\\Agenda.dad", &qc); 
   do {
     system ("cls");
@@ -99,37 +103,19 @@ int main() {
     printf ("1- Inserir novos contatos.\n");
     printf ("2- Listar todos os contatos.\n");
     printf ("3 - Salvar alterações na sua agenda\n");
-    printf ("4 - Sair da Agenda\n");
+    printf ("4 - Excluir um contato\n");
+    printf ("5 - Sair da Agenda\n");
     printf ("Escolha uma opcao:\n");
     scanf ("%d", &op);
     switch (op) {
       case 1: incluir(agenda, &qc); break;
       case 2: listar (agenda, &qc); break;
-      case 3: salvar("C:\\Agenda.dad", agenda, qc); break;
-      case 4: break;
+      case 3: salvar("C:\\Agenda.dad", agenda, &qc); break;
+      case 4: excluir(agenda, &qc); break;
+      case 5: break;
       default: printf ("Escolha incorreta\n");
   }
 }
 while (op != 4);
 return 0;
-=======
-  agenda = leitura("C:\\Agenda.dad", &qc);
-  do {
-      printf("Menu\n");
-      printf("1 - Incluir pessoas na agenda\n");
-      printf("2 - Listar pessoas da sua agenda\n");
-      printf("3 - Salvar alterações na agenda\n");
-      printf("4 - Encerra\n");
-      printf("Informe sua escolha: ");
-      scanf("%d", &op);
-      switch (op) {
-         case 1:  incluir(agenda, &qc); break;   
-         case 2:    listar(agenda, qc); break;
-         case 3:    salvar("C:\\Agenda.dad", agenda, qc);  break;
-         case 4:  break;
-         default: printf("Escolha incorreta\n");
-      }  
-   } while (op!=4);    
-   return 0;
->>>>>>> Stashed changes
 }
