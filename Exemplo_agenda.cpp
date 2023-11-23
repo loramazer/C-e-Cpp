@@ -89,7 +89,7 @@ void listar(tcontato *v, int *qc){
 }
 
 int excluir(tcontato *v, int *qc){
-  
+
 }
 
 // Fun��o principal.
@@ -102,16 +102,16 @@ int main() {
     printf ("Menu\n");
     printf ("1- Inserir novos contatos.\n");
     printf ("2- Listar todos os contatos.\n");
-    printf ("3 - Salvar alterações na sua agenda\n");
-    printf ("4 - Excluir um contato\n");
+    printf ("3 - Excluir um contato\n");
+    printf ("4 - Salvar alterações na sua agenda\n");
     printf ("5 - Sair da Agenda\n");
     printf ("Escolha uma opcao:\n");
     scanf ("%d", &op);
     switch (op) {
       case 1: incluir(agenda, &qc); break;
       case 2: listar (agenda, &qc); break;
-      case 3: salvar("C:\\Agenda.dad", agenda, &qc); break;
-      case 4: excluir(agenda, &qc); break;
+      case 3: excluir(agenda, &qc); break;
+      case 4: salvar("C:\\Agenda.dad", agenda, &qc); break;
       case 5: break;
       default: printf ("Escolha incorreta\n");
   }
