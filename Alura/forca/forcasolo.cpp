@@ -67,7 +67,7 @@ void desenhaforca() {
 
 	for(int i = 0; i < strlen(palavrasecreta); i++) {
 
-		if(jachutou(palavrasecreta[i], chutes, chutesdados)) {
+		if(jachutou(palavrasecreta[i])) {
 			printf("%c ", palavrasecreta[i]);
 		} else {
 			printf("_ ");
@@ -81,14 +81,14 @@ void desenhaforca() {
 void escolhepalavra() {
 	FILE* f;
 
-	f = fopen("palavras.txt", "r");
+	f = fopen("D:\\Github\\C\\Alura\\forca\\palavras.txt", "r");
 	if(f == 0){
 		printf("Desculpe, banco de dados nao disponivel");
 		exit(1);
 	}
 
 	int qtddepalavras;
-	fsacnf(f, "%d", &qtddepalavras);
+	fscanf(f, "%d", &qtddepalavras);
 
 	srand(time(0));
 	int randomico = rand() %qtddepalavras;
@@ -99,6 +99,41 @@ void escolhepalavra() {
 
 	fclose(f);
 }
+void adicionapalavra(){
+
+	char quer;
+	fflush(stdin);
+	printf("Voce deseja adicionar uma nova palavra a seu bano de dados? \n");
+	scanf("%c", &quer);
+
+	if(quer == 'S'){
+		char novapalavra[20];
+		printf("Digite a palavra que você deseja adicionar: \n");
+		scanf("%s", novapalavra);
+
+		FILE* f;
+
+		f = fopen("D:\\Github\\C\\Alura\\forca\\palavras.txt", "r+");
+		if(f == 0){
+			printf("Desculpe, banco de dados nao disponivel");
+			exit(1);
+			}
+
+		int qtd;
+		int sucesso = fscanf(f, "%d", &qtd);
+		if (!sucesso) printf ("Ocorreu um erro");
+		qtd++;
+		
+		rewind(f);
+		fprintf(f, "%d", qtd);
+		
+		fseek(f, 0, SEEK_END);
+		fprintf(f, "\n%s", novapalavra);
+
+		fclose (f);
+	}
+
+}
 
 int main() {
 
@@ -107,13 +142,15 @@ int main() {
 	
 
 	abertura();
-	escolhepalavra(palavrasecreta);
+	escolhepalavra();
 
 	do {
 
-		desenhaforca(palavrasecreta, chutes, chutesdados);
-		chuta(chutes, chutesdados);
+		desenhaforca(  );
+		chuta();
 
 	} while (!ganhou() && !enforcou());
+
+	adicionapalavra();
 
 }
