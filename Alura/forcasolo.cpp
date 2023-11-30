@@ -1,62 +1,91 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#define Tam 100
 
-void escolha_palavra (char Palavra[Tam]) {
-		printf ("Jogo da Forca!!\n");
-		printf("Jogador 1, insira a palara:");
-		gets(Palavra);
+void abertura() {
+	printf("/****************/\n");
+	printf("/ Jogo de Forca */\n");
+	printf("/****************/\n\n");
 }
 
-void chuta(int *tentativas, char Chute[Tam], char Letra) {
-			printf("\n JOGO DA FORCA\n");
-			printf("%s", Chute);
-			printf("  Tentativas restantes: %d\n", 6-(*tentativas));
-			printf("Digite uma letra: ");
-			scanf("%c", &Letra);
+void chuta(char chutes[], int* tentativas) {
+	char chute;
+	printf("Qual letra? ");
+	scanf(" %c", &chute);
+
+	chutes[*tentativas] = chute;
+	(*tentativas)++;
 }
 
-void acertou (char Palavra[aux], char Letra, char Chute[aux], int *acertos){
-	if (Palavra[aux]==Letra && Chute[aux]!=Letra){
-		Chute[aux]=Letra;
-		*acertos++;
-		break;
-	}
-			}
-}
-int main() {
-		char Palavra[Tam], Chute[Tam], Letra;
-		int aux, acertou, tentativas=0, acertos=0, tamanho;
-		
-		//jogador 1 escolhe palavra
-		escolha_palavra(Palavra);
-		tamanho=strlen(Palavra);
-		
-		
-		for(aux=0; aux<tamanho; aux++){
-			Chute[aux]='_';
-		}		
-		Chute[aux]='\0';
-		
-		
-		while (tentativas<6 && acertos<tamanho){
-			//letra
-			chuta(&tentativas, Chute, Letra);
-			
-			acertou=0;
-			for (aux=0; aux<tamanho; aux++) {
-				//verifica se acertou
-				acertou (char Palavra[aux], char Letra, char Chute[aux], int *acertos)
-				if(!acertou){
-					printf("\nPalavra nao possui essa letra\n");
-					tentativas++;
-				}
-			
+int jachutou(char letra, char* chutes, int tentativas) {
+	int achou = 0;
+	for(int j = 0; j < tentativas; j++) {
+		if(chutes[j] == letra) {
+			achou = 1;
+			break;
 		}
-		if (acertos==tamanho)
-			printf("Parabens!!!");
-		else printf("Suas tentativas acabaram.");
+	}
 
-		return 0;	
+	return achou;
+}
+
+int enforcou() {
+	
+	int erros = 0;
+
+	for (int i = 0; i< tentativas; i++){
+		int existe = 0;
+
+		for (int j = 0; j<strlen(palavrasecreta); j++){
+			if (chutes[i]== palavrasecreta[j]){
+
+				existe = 1;
+				break;
+			}
+		}
+		if (!existe) erros ++;
+	}
+	return erros >=5; 
+}
+
+void desenhaforca(char* palavrasecreta, char* chutes, int tentativas) {
+
+	printf("Você já deu %d chutes\n", tentativas);
+
+	for(int i = 0; i < strlen(palavrasecreta); i++) {
+
+		if(jachutou(palavrasecreta[i], chutes, tentativas)) {
+			printf("%c ", palavrasecreta[i]);
+		} else {
+			printf("_ ");
+		}
+
+	}
+	printf("\n");
+
+}
+
+void escolhepalavra(char* palavrasecreta) {
+	sprintf(palavrasecreta, "MELANCIA");
+}
+
+int main() {
+
+	char palavrasecreta[20];
+	
+
+	int acertou = 0;
+
+	char chutes[26];
+	int tentativas = 0;
+
+	abertura();
+	escolhepalavra(palavrasecreta);
+
+	do {
+
+		desenhaforca(palavrasecreta, chutes, tentativas);
+		chuta(chutes, &tentativas);
+
+	} while (!acertou && !enforcou());
+
 }
