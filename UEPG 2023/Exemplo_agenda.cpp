@@ -62,16 +62,36 @@ int incluir(tcontato *v, int *qc) {
     return 0;
 }
 
+void trocacontato (tcontato *menor, tcontato *maior) {
+  tcontato temp= *menor;
+  *menor = *maior;
+  *maior = temp;
+}
+
+int ordena (tcontato *v, int qc) {
+  int i, j;
+  tcontato temp;
+  for (i=0; i<qc-1; i++){
+    for (j=0; j<qc-1-i; j++){
+      if ((strcmpi(v[j].nome, v[j + 1].nome))>0){
+        trocacontato(&v[j], &v[j+1]);
+    }
+  }
+  }
+
+}
+
 // Salva a agenda em disco. Somente entradas preenchidas.
 int salvar(const char filename[], tcontato *v, int *qc) {
    FILE *fp;
    int i;
+   ordena(v, qc);
    fp=fopen(filename, "wb");
    if (fp==NULL) return -1;
    
    for(i=0; i<*qc; i++) 
      fwrite(&v[i], sizeof(tcontato), 1, fp);
-
+    
    fclose(fp);
    return 0;    
 }
