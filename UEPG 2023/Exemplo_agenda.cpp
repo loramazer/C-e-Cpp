@@ -15,50 +15,76 @@ typedef struct {
 //  char sit; 
 } tcontato;
 
-// Carrega contatos do disco e acrescenta 1000 entradas vazias na agenda.
-tcontato * leitura(const char filename[], int *qc) {
-    FILE *fp;
-    tcontato *v;
-    int i;
-    long tb; //total de bytes
-    fp=fopen(filename, "rb");
-    if (fp==NULL) { *qc=0; tb=0;}
-    else {
-        fseek(fp, 0, SEEK_END);
-        tb=ftell(fp);  
-        *qc=tb/sizeof(tcontato); 
-        fseek(fp, 0, SEEK_SET);
+// Leitura dos contatos
+tcontato *leitura(const char filename[], int *qc) {
+    FILE *fp = fopen(filename, "rb");
+    if (fp == NULL) {
+        printf("Arquivo não encontrado. Criando um novo arquivo...\n");
+        *qc = 0;
+
+        // Tentativa de criar um novo arquivo se ele não existir
+        FILE *newFile = fopen(filename, "wb");
+        if (newFile == NULL) {
+            printf("Não foi possível criar um novo arquivo.\n");
+            return NULL;
+        }
+        fclose(newFile);
+
+        // Agora tentamos abrir o arquivo novamente
+        fp = fopen(filename, "rb");
+        if (fp == NULL) {
+            printf("Erro ao abrir o arquivo.\n");
+            return NULL;
+        }
     }
-    tb=tb+ 1000*sizeof(tcontato);  // adicionando 1000 espa�os no vetor 
-    v=(tcontato *) malloc(tb);
-    
-    for(i=0; i<*qc; i++) {
-        fread(&v[i], sizeof(tcontato), 1, fp);         
+
+    fseek(fp, 0, SEEK_END);
+    long tb = ftell(fp);
+    *qc = tb / sizeof(tcontato);
+    fseek(fp, 0, SEEK_SET);
+
+    tcontato *v = (tcontato *)malloc((*qc + 1000) * sizeof(tcontato));
+    if (v == NULL) {
+        fclose(fp);
+        return NULL;
     }
-    
-    if (fp) fclose(fp);
+
+    fread(v, sizeof(tcontato), *qc, fp);
+    fclose(fp);
     return v;
 }
 
-// Permite incluir contatos. Encerra com "fim".
+
+// Função para incluir contatos
 int incluir(tcontato *v, int *qc) {
     char nome[50];
-    int i;
+    int i = *qc;
+
     printf("Nome: ");
     fflush(stdin);
-    gets(nome);
-    i=*qc;
-    while (strcmpi(nome, "fim") !=0 && i<*qc+1000) {
+    fgets(nome, sizeof(nome), stdin);
+    nome[strcspn(nome, "\n")] = '\0'; // Remove a quebra de linha lida pelo fgets
+
+    while (strcmpi(nome, "fim") != 0 && i < *qc + 1000) {
         strcpy(v[i].nome, nome);
-        printf("Fone: "); gets(v[i].fone); 
-        fflush(stdin); 
-        printf("Data Nascimento: ");
-        scanf("%d/%d/%d", &v[i].dtnasc.dia,&v[i].dtnasc.mes, &v[i].dtnasc.ano); 
+
+        printf("Fone: ");
+        fgets(v[i].fone, sizeof(v[i].fone), stdin);
+        v[i].fone[strcspn(v[i].fone, "\n")] = '\0'; // Remove a quebra de linha
+
+        printf("Data Nascimento (DD/MM/AAAA): ");
+        scanf("%d/%d/%d", &v[i].dtnasc.dia, &v[i].dtnasc.mes, &v[i].dtnasc.ano);
+
+        getchar(); // Limpar o buffer do \n deixado pelo scanf
+
         i++;
+
+        printf("Nome: ");
         fflush(stdin);
-        printf("Nome: "); gets(nome);   
+        fgets(nome, sizeof(nome), stdin);
+        nome[strcspn(nome, "\n")] = '\0'; // Remove a quebra de linha
     }
-    *qc=i;
+    *qc = i;
     return 0;
 }
 
@@ -68,32 +94,29 @@ void trocacontato (tcontato *menor, tcontato *maior) {
   *maior = temp;
 }
 
-int ordena (tcontato *v, int qc) {
-  int i, j;
-  tcontato temp;
-  for (i=0; i<qc-1; i++){
-    for (j=0; j<qc-1-i; j++){
-      if ((strcmpi(v[j].nome, v[j + 1].nome))>0){
-        trocacontato(&v[j], &v[j+1]);
+// Função para ordenar os contatos
+int ordena(tcontato *v, int qc) {
+    int i, j;
+    for (i = 0; i < qc - 1; i++) {
+        for (j = 0; j < qc - 1 - i; j++) {
+            if (strcmpi(v[j].nome, v[j + 1].nome) > 0) {
+                trocacontato(&v[j], &v[j + 1]);
+            }
+        }
     }
-  }
-  }
-
+    return 0;
 }
 
-// Salva a agenda em disco. Somente entradas preenchidas.
+// Função para salvar contatos
 int salvar(const char filename[], tcontato *v, int *qc) {
-   FILE *fp;
-   int i;
-   ordena(v, qc);
-   fp=fopen(filename, "wb");
-   if (fp==NULL) return -1;
-   
-   for(i=0; i<*qc; i++) 
-     fwrite(&v[i], sizeof(tcontato), 1, fp);
-    
-   fclose(fp);
-   return 0;    
+    FILE *fp = fopen(filename, "wb");
+    if (fp == NULL) return -1;
+
+    ordena(v, *qc);
+
+    fwrite(v, sizeof(tcontato), *qc, fp);
+    fclose(fp);
+    return 0;
 }
 
 // Lista a agenda.
@@ -108,34 +131,78 @@ void listar(tcontato *v, int *qc){
     system("pause");
 }
 
-int excluir(tcontato *v, int *qc){
 
+int excluir(tcontato *v, int *qc) {
+    char nomeExcluir[50];
+    int i, encontrado = 0;
+
+    printf("Digite o nome do contato que deseja excluir: ");
+    fflush(stdin);
+    fgets(nomeExcluir, sizeof(nomeExcluir), stdin);
+    nomeExcluir[strcspn(nomeExcluir, "\n")] = '\0'; // Remove a quebra de linha
+
+    for (i = 0; i < *qc; i++) {
+        if (strcmpi(v[i].nome, nomeExcluir) == 0) {
+            encontrado = 1;
+            // Sobrescrever o contato encontrado com o último contato na lista e diminuir o contador de contatos (*qc)
+            v[i] = v[*qc - 1];
+            (*qc)--;
+            printf("Contato '%s' excluído com sucesso!\n", nomeExcluir);
+            break;
+        }
+    }
+
+    if (!encontrado) {
+        printf("Contato '%s' não encontrado na agenda.\n", nomeExcluir);
+    }
+
+    return 0;
 }
 
-// Fun��o principal.
+
+
+// Função principal
 int main() {
-  int qc, op; //qntd de contatos
-  tcontato *agenda;  
-  agenda = leitura("C:\\Agenda.dad", &qc); 
-  do {
-    system ("cls");
-    printf ("Menu\n");
-    printf ("1- Inserir novos contatos.\n");
-    printf ("2- Listar todos os contatos.\n");
-    printf ("3 - Excluir um contato\n");
-    printf ("4 - Salvar alterações na sua agenda\n");
-    printf ("5 - Sair da Agenda\n");
-    printf ("Escolha uma opcao:\n");
-    scanf ("%d", &op);
-    switch (op) {
-      case 1: incluir(agenda, &qc); break;
-      case 2: listar (agenda, &qc); break;
-      case 3: excluir(agenda, &qc); break;
-      case 4: salvar("C:\\Agenda.dad", agenda, &qc); break;
-      case 5: break;
-      default: printf ("Escolha incorreta\n");
-  }
-}
-while (op != 4);
-return 0;
+    int qc, op;
+    tcontato *agenda;
+    agenda = leitura("C:\\Agenda.dad", &qc);
+
+    if (agenda == NULL) {
+        printf("Erro ao abrir a agenda.\n");
+        return -1;
+    }
+
+    do {
+        system("cls");
+        printf("Menu\n");
+        printf("1- Inserir novo contato.\n");
+        printf("2- Listar todos os contatos.\n");
+        printf("3- Excluir um contato.\n");
+        printf("4- Salvar alterações na agenda.\n");
+        printf("5- Sair da Agenda.\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &op);
+
+        switch (op) {
+            case 1:
+                incluir(agenda, &qc);
+                break;
+            case 2:
+                listar(agenda, &qc);
+                break;
+            case 3:
+                excluir(agenda, &qc);
+                break;
+            case 4:
+                salvar("D:\\", agenda, &qc);
+                break;
+            case 5:
+                break;
+            default:
+                printf("Escolha incorreta.\n");
+        }
+    } while (op != 5);
+
+    free(agenda); // Liberar a memória alocada
+    return 0;
 }
