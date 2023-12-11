@@ -107,30 +107,23 @@ int ordena(tcontato *v, int qc) {
     return 0;
 }
 
-// Função para salvar contatos
-int salvar(const char filename[], tcontato *v, int *qc) {
-<<<<<<< HEAD
-   FILE *fp;
-   int i;
-   ordena(&v, qc);
-   fp=fopen(filename, "wb");
-   if (fp==NULL) return -1;
-   
-   for(i=0; i<*qc; i++) 
-     fwrite(&v[i], sizeof(tcontato), 1, fp);
-    
-   fclose(fp);
-   return 0;    
-=======
+//Função para salvar contatos
+int salvar(const char filename[], tcontato *v, int qc) {
     FILE *fp = fopen(filename, "wb");
-    if (fp == NULL) return -1;
+    if (fp == NULL) {
+      printf("Erro ao abrir arquivo!");
+      return -1;
+    }
+    
 
-    ordena(v, *qc);
+    ordena(v, qc);
 
-    fwrite(v, sizeof(tcontato), *qc, fp);
+    fwrite(v, sizeof(tcontato), qc, fp);
     fclose(fp);
+    printf("Alteracoes salvas com sucesso!!!");
+    printf("Pressione Enter para continuar...");
+    while (getchar() != '\n'); // Aguarda o usuário pressionar Enter
     return 0;
->>>>>>> 56d091870fb5ed7dd8154a4d89f57cd40903f35b
 }
 
 // Lista a agenda.
@@ -144,6 +137,34 @@ void listar(tcontato *v, int *qc){
 
     system("pause");
 }
+
+void buscar(tcontato *v, int *qc) {
+    int i, encontrou = 0;
+    char nome[50];
+
+    printf("Digite o nome do contato que deseja buscar: ");
+    fflush(stdin);
+    fgets(nome, sizeof(nome), stdin);
+    nome[strcspn(nome, "\n")] = '\0'; // Remove a quebra de linha
+
+    for (i = 0; i < *qc; i++) {
+        if (strcmp(v[i].nome, nome) == 0) {
+            encontrou = 1;
+            printf("\nNome...........: %s\n", v[i].nome);
+            printf("Fone...........: %s\n", v[i].fone);
+            printf("Data Nascimento: %d/%d/%d\n", v[i].dtnasc.dia, v[i].dtnasc.mes, v[i].dtnasc.ano);
+            break;
+        }
+    }
+
+    if (!encontrou) {
+        printf("Não foi possível encontrar o contato.\n");
+    } else {
+        printf("Pressione Enter para continuar...");
+        while (getchar() != '\n'); // Aguarda o usuário pressionar Enter
+    }
+}
+
 
 
 int excluir(tcontato *v, int *qc) {
@@ -168,6 +189,9 @@ int excluir(tcontato *v, int *qc) {
 
     if (!encontrado) {
         printf("Contato '%s' não encontrado na agenda.\n", nomeExcluir);
+    } else {
+        printf("Pressione Enter para continuar...");
+        while (getchar() != '\n'); // Aguarda o usuário pressionar Enter
     }
 
     return 0;
@@ -193,7 +217,8 @@ int main() {
         printf("2- Listar todos os contatos.\n");
         printf("3- Excluir um contato.\n");
         printf("4- Salvar alterações na agenda.\n");
-        printf("5- Sair da Agenda.\n");
+        printf("5- Buscar contato.\n");
+        printf("6- Sair da Agenda.\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &op);
 
@@ -208,14 +233,17 @@ int main() {
                 excluir(agenda, &qc);
                 break;
             case 4:
-                salvar("D:\\", agenda, &qc);
+                salvar("C:\\Agenda.dad", agenda, qc);
                 break;
-            case 5:
+            case 5: 
+                buscar (agenda, &qc);
+                break;
+            case 6:
                 break;
             default:
                 printf("Escolha incorreta.\n");
         }
-    } while (op != 5);
+    } while (op != 6);
 
     free(agenda); // Liberar a memória alocada
     return 0;
