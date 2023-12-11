@@ -85,7 +85,7 @@ int ordena (tcontato *v, int qc) {
 int salvar(const char filename[], tcontato *v, int *qc) {
    FILE *fp;
    int i;
-   ordena(v, qc);
+   ordena(&v, qc);
    fp=fopen(filename, "wb");
    if (fp==NULL) return -1;
    
