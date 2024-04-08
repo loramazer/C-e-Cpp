@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 // Registro data
 typedef struct {
@@ -138,28 +139,37 @@ void listar(tcontato *v, int *qc){
     system("pause");
 }
 
-void buscar(tcontato *v, int *qc) {
-    int i, encontrou = 0;
-    char nome[50];
-
-    printf("Digite o nome do contato que deseja buscar: ");
+void buscar(tcontato *v, int qc) {
+    char nome_busca[50];
+    int i;
+    int encontrou = 0;
+    printf("Digite o nome para buscar: ");
     fflush(stdin);
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = '\0'; // Remove a quebra de linha
+    fgets(nome_busca, sizeof(nome_busca), stdin);
+    nome_busca[strcspn(nome_busca, "\n")] = '\0';
 
-    for (i = 0; i < *qc; i++) {
-        if (strcmp(v[i].nome, nome) == 0) {
+    for (i = 0; nome_busca[i]; i++) {
+        nome_busca[i] = tolower(nome_busca[i]);
+    }
+
+    printf("Resultados da busca:\n\n");
+    for (i = 0; i < qc; i++) {
+        char nome_atual[50];
+        strcpy(nome_atual, v[i].nome);
+        for (int j = 0; nome_atual[j]; j++) {
+            nome_atual[j] = tolower(nome_atual[j]);
+        }
+
+        if (strstr(nome_atual, nome_busca) != NULL) {
+            printf("%-30s  %-20s  %02d/%02d/%04d\n", v[i].nome, v[i].fone, v[i].dtnasc.dia, v[i].dtnasc.mes, v[i].dtnasc.ano);
             encontrou = 1;
-            printf("\nNome...........: %s\n", v[i].nome);
-            printf("Fone...........: %s\n", v[i].fone);
-            printf("Data Nascimento: %d/%d/%d\n", v[i].dtnasc.dia, v[i].dtnasc.mes, v[i].dtnasc.ano);
-            break;
         }
     }
 
     if (!encontrou) {
-        printf("Não foi possível encontrar o contato.\n");
-    } else {
+        printf("Nenhum resultado encontrado para a busca.\n");
+}
+ else {
         printf("Pressione Enter para continuar...");
         while (getchar() != '\n'); // Aguarda o usuário pressionar Enter
     }
@@ -236,7 +246,7 @@ int main() {
                 salvar("C:\\Agenda.dad", agenda, qc);
                 break;
             case 5: 
-                buscar (agenda, &qc);
+                buscar (agenda, qc);
                 break;
             case 6:
                 break;
