@@ -1,21 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "fogefoge.h"
 
 
-char** mapa;
-int linhas;
-int colunas;
+struct mapa m;
 
 void liberamapa(){
-    for (int i = 0; i < linhas; i++){
-        free(mapa[i]);
+    for (int i = 0; i < (m.linhas); i++){
+        free((m.matriz)[i]);
     }
+    
+    free((m.matriz));
 }
 
 void alocamapa(){
-     mapa = malloc(sizeof(char*) * linhas);
-    for (int i = 0; i < linhas; i++){
-        mapa[i] = malloc(sizeof(char)* colunas + 1);
+     (m.matriz) = malloc(sizeof(char*) * (m.linhas));
+    for (int i = 0; i < (m.linhas); i++){
+        (m.matriz)[i] = malloc(sizeof(char)* (m.colunas) + 1);
     }
 }
 
@@ -27,22 +28,79 @@ void lemapa(){
         exit(1);
     }
 
-    fscanf(f, "%d %d", &linhas, &colunas);
+    fscanf(f, "%d %d", &(m.linhas), &(m.colunas));
     alocamapa();
 
     for (int i = 0; i < 5; i++){
-        fscanf(f, "%s", mapa[i]);
+        fscanf(f, "%s", (m.matriz)[i]);
     }
     fclose(f);
 }
 
+void imprimemapa() {
+    for (int i = 0; i < 5; i++){
+        printf("%s\n", (m.matriz)[i]);
+    }
+}
+
+int acabou() {
+    return 0;
+}
+
+void move(char direcao) {
+    int x = 0; // Initialize x with 0 (top-left corner)
+    int y = 0; // Initialize y with 0 (top-left corner)
+    int x_at = 0;
+    int y_at = 0;
+    for (int i = 0; i < m.linhas; i++) {
+        for (int j = 0; j < m.colunas; j++) {
+            if (m.matriz[i][j] == '@') {
+                x_at = i;
+                y_at = j;
+                x = x_at;
+                y = y_at;
+                break;
+            }
+        }
+        if (x_at != 0)  // Break the loop if the '@' character is found
+            break;
+    }
+
+    m.matriz[x_at][y_at] = '.';
+
+    switch (direcao) {
+    case 'a':
+        y--;
+        break;
+    case 'w':
+        x--;
+        break;
+    case 's':
+        x++;
+        break;
+    case 'd':
+        y++;
+        break;
+    }
+
+    m.matriz[x][y] = '@';
+}
 int main (){
+
+
 
     lemapa();
 
-    for (int i = 0; i < 5; i++){
-        printf("%s\n", mapa[i]);
-    }
+    
+    do {
+        imprimemapa();
+
+        char comando;
+        printf("Digite a direcao que o personagem ira seguir:\n") ;
+        scanf("%c", &comando);
+        move(comando);
+
+     } while(!acabou());
 
     liberamapa();
        
