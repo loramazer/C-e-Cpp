@@ -2,6 +2,7 @@
 
 
 using namespace std;
+
 const int TAM = 7;
 int topoP = -1 ;
 int pilha [TAM];
