@@ -100,3 +100,33 @@ void buscaLista (int valor){
     }
 
 }
+
+void recuperaLista (int posicao){
+    struct no *atual;
+    int c = 0;
+    atual = lista;
+    
+    if (lista == NULL ){
+        cout << "Lista vazia" << endl;
+        return;
+    }
+
+    while (atual != NULL && c < posicao){
+        c++;
+        if (c == posicao) {
+            cout << "Valor necontrado na posicao " << c << " foi " << atual -> dado << endl;
+            return;
+        }
+        atual = atual -> prox;
+    }
+    cout << "Posicao inexistente" << endl;
+}
+
+int main (){
+    inserirLista(5);
+    inserirLista(9);
+    inserirLista(7);
+    recuperaLista(2);
+    recuperaLista(5);
+    return 0;
+}

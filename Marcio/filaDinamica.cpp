@@ -18,6 +18,25 @@ void enqueue (int valor) {
 
     if (fim == NULL) {
         inicio = fim = novo;
-    } else fim -> prox = novo;
+    } else {
+        fim -> prox = novo;
+        fim = novo;
+    }
     return;
 }
+
+void dequeue (){
+    struct no * apaga;
+
+    if (inicio == NULL){
+        cout << "Fila vazia" << endl;
+        return;
+    }
+    apaga = inicio;
+    inicio = inicio -> prox;
+    delete (apaga);
+    if (inicio == NULL){
+        fim = NULL;
+    }
+}
+
