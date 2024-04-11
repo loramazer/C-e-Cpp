@@ -87,7 +87,9 @@ void imprime () {
 
 int main () {
     insereLista(1);
-    insereLista(26);
+    insereLista(10);
+    insereLista (5);
+    imprime ();
     removeValor (1);
     imprime();
     return 0;

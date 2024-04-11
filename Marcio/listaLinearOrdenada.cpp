@@ -100,14 +100,3 @@ void buscaLista (int valor){
     }
 
 }
-
-int main (){
-    inserirLista (7);
-    imprime ();
-    removeValor (10);
-    imprime();
-    buscaLista(5);
-    buscaLista(7);
-    removeValor (7);
-    return 0;
-}
