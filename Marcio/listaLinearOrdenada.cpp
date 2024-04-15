@@ -123,10 +123,21 @@ void recuperaLista (int posicao){
 }
 
 int main (){
+   removeValor(5);
     inserirLista(5);
-    inserirLista(9);
+    inserirLista(3);
     inserirLista(7);
-    recuperaLista(2);
-    recuperaLista(5);
+    imprime();
+    recuperaLista(4);
+    recuperaLista(3);
+    inserirLista(1);
+    inserirLista(9);
+    imprime();
+    buscaLista(4);
+    buscaLista(9);
+    removeValor(3);
+    removeValor(7);
+    imprime();
     return 0;
+
 }

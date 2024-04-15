@@ -1,107 +1,125 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "fogefoge.h"
+#include "mapa.h"
+
+ MAPA m;
+POSICAO heroi;
+
+ int praondefantasmavai (int xatual, int yatual, int* xdestino, 
+ int*  ydestino) {
+    int opcoes [4][2] = {
+        {xatual, yatual + 1},
+        { xatual +1, yatual },
+        {xatual , yatual - 1},
+        {xatual -1, yatual}
+    };
+
+    srand(time(0));
+    for(int i = 0; i < 10; i++){
+        int posicao = rand() % 4;
+
+        if(podeandar(&m, FANTASMA,opcoes[posicao][0] , opcoes[posicao][1])) {
+            *xdestino = opcoes[posicao][0];
+            *ydestino = opcoes[posicao][1];
+            return 1;
+    
+        }
+
+    }
+
+    return 0;
+ }
 
 
-struct MAPA m;
+void fantasmas(){
+    MAPA copia;
 
-void liberamapa(){
-    for (int i = 0; i < (m.linhas); i++){
-        free((m.matriz)[i]);
+    copiamapa(&copia, &m);
+
+    for (int i = 0; i < m.linhas; i++) {
+        for (int j = 0; j < m.colunas; j++){
+
+            if(copia.matriz[i][j] == FANTASMA) {
+
+                int xdestino;
+                int ydestino;
+
+                int encontrou = praondefantasmavai(i, j, &xdestino, &ydestino);
+                if(encontrou) {
+                    andanomapa(&m, i, j, xdestino, ydestino);
+                }
+            }
+        }
     }
     
-    free((m.matriz));
-}
+    liberamapa(&copia);
 
-void alocamapa(){
-     (m.matriz) = malloc(sizeof(char*) * (m.linhas));
-    for (int i = 0; i < (m.linhas); i++){
-        (m.matriz)[i] = malloc(sizeof(char)* (m.colunas) + 1);
-    }
-}
-
-void lemapa(){
-    FILE* f;
-    f = fopen("D:\\Github\\C\\Alura\\fogefoge\\mapa.txt", "r");
-    if (f==0) {
-        printf("Erro na leitura do mapa\n");
-        exit(1);
-    }
-
-    fscanf(f, "%d %d", &(m.linhas), &(m.colunas));
-    alocamapa();
-
-    for (int i = 0; i < 5; i++){
-        fscanf(f, "%s", (m.matriz)[i]);
-    }
-    fclose(f);
-}
-
-void imprimemapa() {
-    for (int i = 0; i < 5; i++){
-        printf("%s\n", (m.matriz)[i]);
-    }
 }
 
 int acabou() {
-    return 0;
+    POSICAO pos;
+    int fogefogenomapa = encontramapa(&m, &pos, HEROI);
+    return fogefogenomapa;
+}
+
+int ehdirecao (char direcao) {
+    return direcao == DIREITA ||
+    direcao == ESQUERDA ||
+    direcao  == CIMA ||
+    direcao  == BAIXO;
 }
 
 void move(char direcao) {
-    int x = 0; // Initialize x with 0 (top-left corner)
-    int y = 0; // Initialize y with 0 (top-left corner)
-    int x_at = 0;
-    int y_at = 0;
-    for (int i = 0; i < m.linhas; i++) {
-        for (int j = 0; j < m.colunas; j++) {
-            if (m.matriz[i][j] == '@') {
-                x_at = i;
-                y_at = j;
-                x = x_at;
-                y = y_at;
-                break;
-            }
-        }
-        if (x_at != 0)  // Break the loop if the '@' character is found
-            break;
-    }
 
-    m.matriz[x_at][y_at] = '.';
+    if (!ehdirecao(direcao))
+        return;
+
+    int proximox =  heroi.x;
+    int proximoy =   heroi.y;
 
     switch (direcao) {
-    case 'a':
-        y--;
+    case ESQUERDA:
+        proximoy--;
         break;
-    case 'w':
-        x--;
+    case CIMA:
+       proximox--;
         break;
-    case 's':
-        x++;
+    case BAIXO:
+        proximox++;
         break;
-    case 'd':
-        y++;
+    case DIREITA:
+        proximoy++;
         break;
     }
 
-    m.matriz[x][y] = '@';
-}
-int main (){
-
-
-
-    lemapa();
-
+    if (!podeandar(&m, HEROI, proximox, proximoy))
+    return;
     
+
+    andanomapa(&m, heroi.x, heroi.y, proximox, proximoy);
+    heroi.x=proximox;
+    heroi.y=proximoy;
+    fantasmas();
+
+    }
+
+
+int main() {
+
+    lemapa(&m);
+    encontramapa(&m, &heroi, HEROI);
+
     do {
-        imprimemapa();
+        imprimemapa(&m);
 
         char comando;
-        printf("Digite a direcao que o personagem ira seguir:\n") ;
-        scanf("%c", &comando);
+        scanf(" %c", &comando);
+
         move(comando);
 
-     } while(!acabou());
+    } while (!acabou());
 
-    liberamapa();
-       
+    liberamapa(&m);
 }

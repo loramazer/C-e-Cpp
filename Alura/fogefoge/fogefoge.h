@@ -1,14 +1,11 @@
-void liberamapa();
-void lemapa();
-void alocamapa();
+#define CIMA 'w'
+#define BAIXO 's'
+#define  ESQUERDA 'a'
+#define DIREITA 'd'
+
+int ehdirecao (char direcao);
 int acabou();
 void move(char direcao);
-void imprimemapa();
-
-struct mapa {
-    char** matriz;
-    int linhas;
-    int colunas;
-};
-
-typedef struct mapa MAPA;
+void fantasmas();
+int praondefantasmavai (int xatual, int yatual, int* xdestino, 
+ int*  ydestino);
