@@ -1,5 +1,5 @@
 #include <iostream>
-#define TAM 5
+#define TAM 10
 using namespace std;
 int vetor[TAM];
 
@@ -28,6 +28,11 @@ int main () {
     vetor[3] =  7;
     vetor[4] =  9;
     vetor[0] =  1; 
+    vetor[5] =  6;
+    vetor[6] =    8;
+    vetor[7] =   4;
+    vetor [8] = 2;
+    vetor [9] = 12;
     SELECTION_SORT();
     for (int i = 0; i  < TAM; i++) {
         cout << vetor[i];

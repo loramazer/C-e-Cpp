@@ -7,8 +7,8 @@ int vetor[TAM];
 void merge (int vetor [], int inicio, int meio, int fim){
     int aux1 = inicio, aux2 = meio + 1, comAux = 0, vetAux[fim-inicio+1];
     while (aux1<= meio && aux2 <= fim) {
-        if(vetor[aux1] <= vetor[aux2]){
-            vetAux[comAux] = vetor [aux1];
+        if(vetor[aux1] <= vetor[aux2]){ //compara os elementos dos dois subvetores
+            vetAux[comAux] = vetor [aux1]; //copia o menor elemento para o vet aux
             aux1++;
         } else {
             vetAux[comAux] = vetor[aux2];
@@ -16,28 +16,28 @@ void merge (int vetor [], int inicio, int meio, int fim){
         }
         comAux++ ;
     }
-    while(aux1 <= meio) {
+    while(aux1 <= meio) { //garante que todos os restantes foram para vetaux
         vetAux[comAux] = vetor[aux1];
         comAux++;
         aux1++;
     }
-    while (aux2<=fim){
+    while (aux2<=fim){ //garante que todos os restantes foram para vetaux
         vetAux[comAux] = vetor [aux2];
         comAux ++;
         aux2++;
     }
     for (comAux = 0; comAux <= fim - inicio; comAux++){
-        vetor[inicio + comAux] = vetAux[comAux];
+        vetor[inicio + comAux] = vetAux[comAux]; //copia para o vet original
     }
 }
 
 void MERGESORT (int* vetor, int inicio, int fim){
     int mid;
-    if (inicio < fim){
-        mid = (fim + inicio)/2;
-        MERGESORT(vetor, inicio, mid);
-        MERGESORT(vetor, mid+1, fim);
-        merge (vetor, inicio, mid, fim);
+    if (inicio < fim){ //garante que tem mais de um elemento no vetor
+        mid = (fim + inicio)/2; //calcura o indice do meio
+        MERGESORT(vetor, inicio, mid); //ordena a primeira metade
+        MERGESORT(vetor, mid+1, fim); //ordena a segunda metade
+        merge (vetor, inicio, mid, fim); //mescla elas 
     }
 }
 
