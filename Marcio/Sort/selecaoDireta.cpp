@@ -6,15 +6,18 @@ int vetor[TAM];
 void SELECTION_SORT (){
     int aux;
     int current;
-    for (int i = 0; i < (TAM - 2); i++){
+    for (int i = 0; i < (TAM - 1); i++){
         current = i;
-        for (int j = (i+1); j < (TAM - 1) ;j ++ ){
+        for (int j = (i+1); j < (TAM) ;j ++ ){
             if (vetor[current] > vetor[j]){
                 current = j;
             }
-            aux = vetor[j];
-            vetor[j] = vetor[current];
-            vetor[current] = aux;
+            
+    }
+    if (vetor[i] !=  vetor[current]){
+        aux = vetor[i];
+        vetor[i] = vetor[current];
+        vetor[current] = aux;
     }
     }
 }
