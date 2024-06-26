@@ -1,7 +1,7 @@
 #include <iostream>
  using namespace std;
 
- const int TAM = 1;
+ const int TAM = 10000;
  int heap[TAM];
  int tamanho = 0;
 
@@ -42,6 +42,41 @@
     }
  }
 
- void removeHeap(){
-    
+ int removeHeap(){
+    if (tamanho == 0) {
+        cout << "heap vazia" << endl;
+        return -1;
+    }
+
+    int remover = heap [0];
+    heap[0] = heap[tamanho-1];
+    tamanho--;
+
+    heapfy(0);
+    cout << "Valor removido: " << remover << endl;
+    return remover;
  }
+
+ int main() {
+    int numero;
+    FILE* f;
+    f = fopen("numeros.txt", "r");
+    if (f==0){
+        cout << "Erro ao abrir arquivo" << endl;
+    }
+    while (fscanf(f, "%d", &numero) != EOF){
+        insereHeap(numero);
+    }
+    fclose(f);
+    heapfy(0);
+    for(int i = 0; i < 3; ++i){
+        int maior = removeHeap();
+        if (maior != -1){
+            cout << maior << endl;
+        } else {
+            cout << "Nao ha numeros suficientes" << endl;
+            break;
+        }
+    }
+    return 0;
+}
