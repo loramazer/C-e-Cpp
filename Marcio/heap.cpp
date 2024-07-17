@@ -43,5 +43,17 @@
  }
 
  void removeHeap(){
-    
+    if (tamanho == 0){
+        cout << "Heap vazia"<< endl;
+        return;
+    }
+    int remove = heap[0];
+    heap[0] = heap[tamanho - 1];
+    tamanho --;
+
+    heapfy(0);
+
+    return;
  }
+
+ void imprime
