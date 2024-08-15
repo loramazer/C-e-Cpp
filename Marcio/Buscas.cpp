@@ -3,7 +3,7 @@
 using namespace std;
 
 const int TAM = 5;
-int vetor[TAM+1] = {5, 2, 6, 20, 30};
+int vetor[TAM+1] = {2, 5, 6, 20, 30};
 
 void buscaSequencial (int chave){
     int i = 0;
@@ -57,13 +57,27 @@ void buscaMoverPraFrente(int chave){
     }else cout << "Nao encontrei "<< chave << endl;
 }
 
+void buscaBinaria(int chave){
+    int inicio = 0;
+    int fim = TAM-1;
+    int meio = 0;
+    while (meio<=fim && vetor[meio]!= chave){
+        meio = (inicio+fim)/2;
+        if (vetor[meio] < chave){
+            inicio = meio+1;
+        } else if(vetor[meio]> chave){
+            fim = meio - 1;
+        } else { cout <<"A chave esta na posicao " << meio << endl;
+        return;
+        } 
+    }
+    cout << "Nao foi possivel encontrar a chave"<< endl;
+    return;
+}
+
 int main(){
     int chave = 20;
-    buscaSequencial(chave);
-    buscaSequencialComSentinela(chave);
-    buscaTransposicao(chave);
-    buscaMoverPraFrente(chave);
-    buscaSequencial(chave);
+    buscaBinaria(chave);
     return 0;
 }
 
