@@ -19,7 +19,7 @@ struct no {
 struct no* raiz=NULL, *raizAVL=NULL;
 
 int vetor[TAM];
-int contBS, contAVL, contAB, contBB;
+int contBS, contAVL, contAB, contBB, chave;
 
 void copiaVetor(int* novoVetor){
     for (int i = 0; i < TAM; i++){
@@ -37,7 +37,7 @@ void implementarVetor (){
 }
 
 int gerarChave(){
-    return rand();
+    chave = rand();
 }
 
 // Rotação para a esquerda
@@ -228,152 +228,63 @@ void buscaSequencial (int chave, int* vetor){
     else cout << "Nao encontrei " << chave << endl;
 }
 
-int PARTITION (int* vetor, int inicio, int final){
-    int aux;
-    int pivo = vetor [inicio]; //define o primeiro elemento como pivo
-    int i = inicio - 1; 
-    int j = final + 1;
-
-    while (true){ //ocorre ate que i e j se encontrem
-        do{ j--; } //se move pra esquerda
-        while (vetor[j] > pivo); // ate encontrar elemento <= ao pivo
-        do {i++;} //se move pra direita
-        while (vetor[i] < pivo); //ate encontrar elemento >= ao pivo
-        if (i < j){
-            aux=vetor[i];
-            vetor[i]=vetor[j];
-            vetor[j]=aux;
-        } else return j;
-    }
-}
-
-void QUICKSORT (int* vetor, int inicio, int final){
-    if (inicio < final){ //se inicio for maior ou igual a final ja esta ordenado
-        int q = PARTITION (vetor, inicio, final); //particiona o subvetor e retorna o pivo no final
-        QUICKSORT (vetor, inicio, q); //ordena o subvetor esquerdo (elementos menores que o pivo)
-        QUICKSORT (vetor, q + 1, final);//ordena o subvetor direito(elementos maiores que o pixo)
-    }
-}
-
 void buscaBinaria(int chave, int* vetor){
     int inicio = 0;
     int fim = TAM-1;
-    int meio;
+    int meio = 0;
     contBB++;
-    while (inicio <= fim){
-        contBB++;
+    while (meio<=fim && vetor[meio]!= chave){
         meio = (inicio+fim)/2;
         contBB++;
-        if (vetor[meio] == chave) {
-            cout << "A chave está na posição " << meio << endl;
-            return;
-        } else if (vetor[meio] < chave) {
-            contBB++;
-            inicio = meio + 1;
-        } else {
-            contBB++;
+        if (vetor[meio] < chave){
+            inicio = meio+1;
+        } else if(vetor[meio]> chave){
             fim = meio - 1;
-        }
+            contBB++;
+        } else { cout <<"A chave esta na posicao " << meio << endl;
+        return;
+        } 
     }
-
-    cout << "Não foi possível encontrar a chave" << endl;
+    cout << "Nao foi possivel encontrar a chave"<< endl;
+    return;
 }
 
-
-struct no* buscaArvore(struct no* raiz, int chave) {
-    //se a raiz é nula ou a chave está na raiz
-    contAB++;
-    if (raiz == nullptr){
-        cout<< "nao encontrei"<<endl;
-        return raiz;
+void apaga(struct no *atual) {
+    if (atual!=NULL) {
+        apaga(atual->esq);
+        apaga(atual->dir);
+        delete(atual);
     }
-    contAB++;
-    if(raiz->dado == chave){
-        cout<<"encontrei chave"<<endl;
-        return raiz;
-    }
-    // busca na subárvore direita
-    contAB++;
-    if (raiz->dado < chave){
-        return buscaArvore(raiz->dir, chave);
-    }
-    // busca na subárvore esquerda
-    return buscaArvore(raiz->esq, chave);
 }
 
-struct no* buscaArvoreAVL(struct no* raiz, int chave) {
-    contAVL++;
-    //se a raiz é nula ou a chave está na raiz
-    if (raiz == nullptr){
-        cout<< "nao encontrei"<<endl;
-        return raiz;
-    }
-    contAVL++;
-    if(raiz->dado == chave){
-        cout<<"encontrei chave"<<endl;
-        return raiz;
-    }
-    // busca na subárvore direita
-    contAVL++;
-    if (raiz->dado < chave){
-        return buscaArvoreAVL(raiz->dir, chave);
-    }
-    // busca na subárvore esquerda
-    return buscaArvoreAVL(raiz->esq, chave);
+void buscaArvores(int chave,struct no* raiz){
+
 }
 
 int main (){
     float opBB = 0, opBS= 0, opAVL = 0, opAB = 0;
-    int rep = 1000;
-    int buscaB[TAM];
-    implementarVetor();
-    cout<<"Implementando vetor"<< endl;
-    // copiaVetor(buscaS);
-    // cout<<"Copia vetor S"<< endl;
-
-    copiaVetor(buscaB);
-    cout<<"copia vetor B"<< endl;
-    QUICKSORT(buscaB ,0, TAM-1);
-
-
-    for(int j = 0; j < TAM; j++){
-        insereArvore(vetor[j]);
-        // cout<<"Inserindo na arvore"<< endl;
-        // cout<<j<<endl;
-    }
-
-    for(int j = 0; j < TAM; j++){
-        insereArvoreAVL(vetor[j]);
-        // cout<<"Inserindo na arvore AVL"<< endl;
-        // cout<<j<<endl;
-    }
-
-    for(int i = 0; i <= rep; i++){
-        int chave = gerarChave();
-        cout<<"chave "<<chave<< endl;
- 
-        buscaSequencial(chave, vetor);
-        cout<<"Busca sequencial"<< endl;
-        
+    for(int i = 0; i <= 1000; i++){
+        int chave = gerarChave(), buscaS[TAM], buscaB[TAM];
+        implementarVetor();
+        copiaVetor(buscaS);
+        buscaSequencial(chave, buscaS);
+        copiaVetor(buscaB);
         buscaBinaria(chave, buscaB);
-        cout<<"Busca binaria"<< endl;
-        
-        buscaArvore(raiz, chave);
-        cout<<"Busca arvore"<< endl;
-        
-        buscaArvoreAVL(raizAVL, chave);
-        cout<<"Busca arvore AVL"<< endl;
-        
-        cout<< i<< endl;
+        for(int j = 0; j < TAM; j++){
+            insereArvore(vetor[i]);
+        }
+        //buscaArvore(chave, no);
+        apaga(raiz);
+        for(int j = 0; j < TAM; j++){
+            insereArvoreAVL(vetor[i]);
+        }
+        //buscaArvoreAVL(chave, noAVL);
+        apaga(raizAVL);
     }
-    
-    opBB = contBB / rep;
-    opAB = contAB / rep;
-    opAVL = contAVL / rep;
-    opBS = contBS / rep;
-    cout << " Busca Sequencial: "<< opBS << " Busca Binaria: " << opBB << " Busca em Arvore Binaria: " << opAB 
-    << " Busca em Arvore AVL: "<< opAVL<< endl;
-    //cout << "Busca Sequencial: "<<contBS << " Busca Binaria: " << contBB << " Busca em Arvore Binaria: " << contAB 
-    //<< "Busca em Arvore AVL: "<< contAVL<< endl;
-    return 0;
+    opBB = contBB / 1000;
+    opAB = contAB / 1000;
+    opAVL = contAVL / 1000;
+    opBS = contBS / 1000;
+    cout << "Busca Sequencial: "<< &opBS << "Busca Binaria: " << &opBB << "Busca em Arvore Binaria: " << &opAB 
+    << "Busca em Arvore AVL: "<< &opAVL<< endl;
 }
